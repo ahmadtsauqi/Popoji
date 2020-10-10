@@ -11,22 +11,36 @@
 |
 */
 
-Route::match(['get', 'post'], '/', 'HomeController@index');
-Route::get('home', 'HomeController@index')->name('home');
-Route::get('pages/{seotitle}', 'PagesController@index');
-Route::get('category/{seotitle}', 'CategoryController@index');
-Route::get('tag/{seotitle}', 'TagController@index');
-Route::get('search', 'PostController@search');
-Route::get('detailpost/{seotitle}', 'PostController@index');
-Route::get('post/{seotitle}', 'PostController@index');
-Route::get('post/{seotitle}-{id}', 'PostController@index');
-Route::get('article/{year}/{month}/{day}/{seotitle}', 'PostController@article');
-Route::post('comment/send/{seotitle}', 'PostController@send');
-Route::get('album/{seotitle}', 'GalleryController@index');
-Route::get('404', 'HomeController@error404')->name('404');
-Route::get('contact', 'ContactController@index');
-Route::post('contact/send', 'ContactController@send');
-Route::post('subscribe', 'HomeController@subscribe');
+if(getSetting('maintenance_mode') == 'Y') {
+	if (!Request::is('login')) {
+		Route::get('/', function() {
+			return view('maintenance');
+		});
+
+		if (!strpos(Request::url(),'dashboard')) {
+			Route::get('{url}', function($url) {
+				return view('maintenance');
+		 	})->where('url', '.*');
+		}
+	}
+} else {
+	Route::match(['get', 'post'], '/', 'HomeController@index');
+	Route::get('home', 'HomeController@index')->name('home');
+	Route::get('pages/{seotitle}', 'PagesController@index');
+	Route::get('category/{seotitle}', 'CategoryController@index');
+	Route::get('tag/{seotitle}', 'TagController@index');
+	Route::get('search', 'PostController@search');
+	Route::get('detailpost/{seotitle}', 'PostController@index');
+	Route::get('post/{seotitle}', 'PostController@index');
+	Route::get('post/{seotitle}-{id}', 'PostController@index');
+	Route::get('article/{year}/{month}/{day}/{seotitle}', 'PostController@article');
+	Route::post('comment/send/{seotitle}', 'PostController@send');
+	Route::get('album/{seotitle}', 'GalleryController@index');
+	Route::get('404', 'HomeController@error404')->name('404');
+	Route::get('contact', 'ContactController@index');
+	Route::post('contact/send', 'ContactController@send');
+	Route::post('subscribe', 'HomeController@subscribe');
+}
 
 if(getSetting('member_registration') == 'Y') {
 	Auth::routes(['verify' => true]);
